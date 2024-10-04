@@ -7,6 +7,7 @@ from streamlit import image
 
 BG_COLOR = "#B1DDC6"
 #-----------------------read data---------------------------#
+'''There much be words_to_learn.csv or french_words.csv or else the code will not compile'''
 try:
     data = pandas.read_csv("data/words_to_learn.csv")
 except FileNotFoundError:
@@ -15,6 +16,7 @@ except FileNotFoundError:
 else:
     words = data.to_dict(orient="records")
 current_card = {}
+
 
 #--------------------------Function-------------------------#
 def check_word():
