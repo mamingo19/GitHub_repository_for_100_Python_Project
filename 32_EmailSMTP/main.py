@@ -1,33 +1,24 @@
-# import smtplib
-#
-# my_email = "anonymous2528201122@gmail.com"
-# password = "yffpmpqogbpvxjer"
-#
-# with smtplib.SMTP("smtp.gmail.com",587) as connection:
-#     connection.starttls()
-#     connection.login(user=my_email, password=password)
-#     connection.sendmail(from_addr = my_email, to_addrs = "ndlanh22052002@gmail.com", msg="Subject:lan anh a`!\n\ntai sao lam ban cua nhau lau nhu v ma Lan Anh thay email cua tui Lan Anh lai khong rep??? tui buon lam biet ko?")
-
-
-#----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
-
-import smtplib
 import datetime
+import pandas
 import random
+import smtplib
 
 MY_EMAIL = "anonymous2528201122@gmail.com"
 PASSWORD = "yffpmpqogbpvxjer"
 
-now = datetime.datetime.now()
-weekday = now.weekday()
-if weekday == 5:
-    with open("quotes.txt") as quote_file:
-        all_quotes = quote_file.readlines()
-        quote = random.choice(all_quotes)
+today = (datetime.datetime.now().month, datetime.datetime.now().day)
 
-    with smtplib.SMTP("smtp.gmail.com",587) as connection:
+data = pandas.read_csv("birthdays.csv")
+birthday_dict = {(data_row["month"], data_row["day"]): data_row for (index, data_row) in data.iterrows()}
+
+if today in birthday_dict:
+    birthday_person = birthday_dict[today]
+    file_path = f"letter_templates/letter_{random.randint(1,3)}.txt"
+    with open(file_path) as letter:
+        content = letter.read()
+        new_letter = content.replace("[NAME]", birthday_person["name"])
+
+    with smtplib.SMTP("smtp.gmail.com", 587) as connection:
         connection.starttls()
         connection.login(user=MY_EMAIL, password=PASSWORD)
-        connection.sendmail(from_addr = MY_EMAIL, to_addrs = "huytton119@gmail.com", msg=f"Subject:Quote!\n\n{quote}")
-
-
+        connection.sendmail(from_addr=MY_EMAIL, to_addrs=birthday_person["email"], msg=f"Subject:Happy Birthday Dear {birthday_person["name"]}!\n\n{new_letter}")
