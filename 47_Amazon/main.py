@@ -1,6 +1,10 @@
 from bs4 import BeautifulSoup
 import requests
 import smtplib
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 PRACTICE_URL = "https://appbrewery.github.io/instant_pot/"
 LIVE_URL = "https://www.amazon.com/dp/B075CYMYK6?psc=1&ref_=cm_sw_r_cp_ud_ct_FM9M699VKHTT47YD50Q6"
@@ -27,11 +31,11 @@ BUY_PRICE = 100
 if price_as_float < BUY_PRICE:
     message = f"{title} in on sale for {price}!"
 
-    with smtplib.SMTP("smtp.gmail.com", port = 587) as connection:
+    with smtplib.SMTP(os.environ["SMTP_ADDRESS"], port = 587) as connection:
         connection.starttls()
-        result = connection.login("huytton119@gmail.com", "syds himx shyb qoqt")
+        result = connection.login(os.environ["EMAIL_ADDRESS"], os.environ["EMAIL_PASSWORD"])
         connection.sendmail(
-            from_addr = "huytton119@gmail.com",
-            to_addrs= "huytton119@gmail.com",
+            from_addr = os.environ["EMAIL_ADDRESS"],
+            to_addrs= os.environ["EMAIL_ADDRESS"],
             msg = f"Subject: Amazon Price Alert!\n\n{message}\n{LIVE_URL}".encode("utf-8")
         )
